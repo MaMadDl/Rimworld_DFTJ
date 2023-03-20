@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+	<name>Room Apparels</name>
+	<packageId>MAG.roomapparels</packageId>
+	<author>Noisy</author>
+	<supportedVersions>
+		<li>1.4</li>
+	</supportedVersions>
+	<loadBefore></loadBefore>
+	<incompatibleWith></incompatibleWith>
+	<description>Add The Ability to automatically Change Apparels to do specific tasks such as research or crafting 
+	</description>
+	<url>https://github.com/MaMadDl/Rimworld_RoomApparels</url>
+	<modDependencies>
+		<li>
+			<packageId>brrainz.harmony</packageId> 
+			<displayName>Harmony</displayName>
+			<downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
+			<steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
+		</li>
+		<li>
+			<packageId>khamenman.armorracks</packageId>
+			<displayName>Armor Racks</displayName>
+			<steamWorkshopUrl>steam://url/CommunityFilePage/1875828205</steamWorkshopUrl>
+		</li>
+	</modDependencies>
+	<loadAfter>
+		<li>brrainz.harmony</li>
+		<li>khamenman.armorracks</li>
+	</loadAfter> 
+
+</ModMetaData>
