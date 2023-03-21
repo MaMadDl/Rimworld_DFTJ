@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ArmorRacks.Things;
-using HarmonyLib;
 using RimWorld;
 using Verse;
 using Verse.AI;
@@ -39,6 +38,14 @@ namespace RoomApparels
              {
                  //for now change to int later
                  Enabled = !Enabled;
+                 if (Enabled) 
+                 {   
+                     var assignedOwner = this.parent.AllComps.OfType<CompAssignableToPawn>().First(); 
+                     foreach(var pawn in assignedOwner.AssignedPawnsForReading)
+                     {
+                         assignedOwner.TryUnassignPawn(pawn);
+                     }
+                 }
              };
             yield return command_Toggle;
             yield break;
