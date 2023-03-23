@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+	<allowAllJobs>Enable Racks for All  Job Types (Turing this on Override all other Job Selections) </allowAllJobs>
+	<SettingEnable>Enable Racks for Job Type of {0}</SettingEnable>
+
+
+</LanguageData>
