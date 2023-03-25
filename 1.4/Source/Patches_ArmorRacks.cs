@@ -14,7 +14,6 @@ namespace RoomApparels
     class CompRoomApparelsEnabler : ThingComp
     {
         public bool Enabled;
-        public bool setAllJobs;
         public Dictionary<string, bool> skillsInComp;
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()

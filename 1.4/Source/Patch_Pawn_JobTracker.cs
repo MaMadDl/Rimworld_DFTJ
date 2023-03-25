@@ -26,6 +26,21 @@ namespace RoomApparels
 			return job?.targetA.Thing?.Position.GetRoom(Find.CurrentMap);
 		}
 
+		private static bool compareSkillsHelper(List<SkillDef> jobSkill, ArmorRack rack)
+        {
+			var trueRacks = rack.AllComps.OfType<CompRoomApparelsEnabler>().First().skillsInComp.Where(s => s.Value);
+			if(trueRacks.Count() == 0)
+            {
+				// no job is set so all is permitted
+				return true;
+            }
+			var rackSkill = trueRacks.Select(s=>s.Key).ToList();
+			var jobStr = jobSkill.Select(s => s.ToString()).ToList();
+			var first2Second = rackSkill.Except(jobStr);
+			var second2First = jobStr.Except(rackSkill);
+			return !first2Second.Any() && !second2First.Any();
+        }
+
 		static void Postfix(Pawn_JobTracker __instance, ref ThinkResult __result)
 		{
 			Pawn pawn = __instance.pawn;
@@ -56,18 +71,22 @@ namespace RoomApparels
 			}
 			var worktype = currJob.workGiverDef.workType;
 			var skillList = currJob.workGiverDef.workType.relevantSkills;
-			bool jobSetting= RoomApparelsMain.settings.allPossibleJobs || RoomApparelsMain.settings.jobTypeList.TryGetValue(worktype.ToString());
+
+			bool jobSetting = RoomApparelsMain.settings.allPossibleJobs || RoomApparelsMain.settings.jobTypeList.TryGetValue(worktype.ToString());
 
 			if (pawn.def.race.intelligence == Intelligence.Humanlike && thinkNode.SourceNode is JobGiver_Work && jobSetting )
  			{
 				// add checks based on type of racks like human and age 
 				var rackLister = destRoom?.ContainedAndAdjacentThings.OfType<ArmorRack>()
 															.Where(r => r.AllComps.OfType<CompRoomApparelsEnabler>().First().Enabled);
+				
 				if (rackLister?.Any() ?? true)
 				{
+					
 					// Getting First Rack That's Not Reserved and has something stored
 					var rack = rackLister.FirstOrFallback(r => r.InnerContainer.Count() > 0
 															&& !r.MapHeld.reservationManager.IsReservedByAnyoneOf(r, Faction.OfPlayer)
+															&& compareSkillsHelper(skillList, r)
 															&& !r.IsForbidden(pawn));
 					if (rack != null)
 					{
