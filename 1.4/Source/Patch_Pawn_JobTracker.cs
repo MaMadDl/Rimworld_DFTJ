@@ -35,12 +35,14 @@ namespace RoomApparels
 			
 			if (pawn.Faction == null) return;
 
+			if (currJob.workGiverDef == null) return;
+
 			var oldPawnJob = prevJobs.TryGetValue(pawn);
 
 			if (currJob == prevJobs.TryGetValue(pawn)?.Item1) return;
 
-			if (oldPawnJob != null && (oldPawnJob?.Item1?.def != currJob?.def || destRoom != getRoomAtJobDestination(oldPawnJob?.Item1)))
-			{
+ 			if (oldPawnJob != null && (oldPawnJob?.Item1?.def != currJob?.def || destRoom != getRoomAtJobDestination(oldPawnJob?.Item1)))
+ 			{
 
 				destRoom = getRoomAtJobDestination(oldPawnJob.Item1);
 
@@ -52,9 +54,11 @@ namespace RoomApparels
                 prevJobs.Remove(pawn);
 				return;
 			}
+			var worktype = currJob.workGiverDef.workType;
+			var skillList = currJob.workGiverDef.workType.relevantSkills;
+			bool jobSetting= RoomApparelsMain.settings.allPossibleJobs || RoomApparelsMain.settings.jobTypeList.TryGetValue(worktype.ToString());
 
-			//change DOBill Later ///FIXME	
-			if (pawn.def.race.intelligence == Intelligence.Humanlike && thinkNode.SourceNode is JobGiver_Work && currJob.def == JobDefOf.DoBill )
+			if (pawn.def.race.intelligence == Intelligence.Humanlike && thinkNode.SourceNode is JobGiver_Work && jobSetting )
  			{
 				// add checks based on type of racks like human and age 
 				var rackLister = destRoom?.ContainedAndAdjacentThings.OfType<ArmorRack>()
@@ -76,19 +80,6 @@ namespace RoomApparels
 
 							var injected = new ThinkResult(new Job(ArmorRacksJobDefOf.ArmorRacks_JobWearRack, rack) { count = 1 }, thinkNode.SourceNode, thinkNode.Tag, false);
 							__result = injected;
-							
-
-						}
-						else
-						{
-							Log.Error("we are in a bad place");
-							pawn.jobs?.StartJob(new Job(
-								ArmorRacksJobDefOf.ArmorRacks_JobWearRack, rack)
-							{ count = 1 },
-								JobCondition.InterruptOptional,
-								resumeCurJobAfterwards: true,
-								cancelBusyStances: false,
-								keepCarryingThingOverride: true);
 						}
 					}
 				}

@@ -26,15 +26,13 @@ namespace RoomApparels
         {
             base.DoSettingsWindowContents(inRect);
 
-            List<SkillDef> jobList = DefDatabase<SkillDef>.AllDefsListForReading;
-            
-
+            List<WorkTypeDef> jobList = DefDatabase<WorkTypeDef>.AllDefsListForReading;
 
             if (settings.jobTypeList == null) settings.jobTypeList = new Dictionary<string, bool>();
             foreach (var def in jobList)
             {
                 string name = def.ToString();
-                if (!settings.jobTypeList.ContainsKey(name) && DefDatabase<SkillDef>.GetNamedSilentFail(name) != null)
+                if (!settings.jobTypeList.ContainsKey(name) && DefDatabase<WorkTypeDef>.GetNamedSilentFail(name) != null)
                 {
                     settings.jobTypeList[name] = false;
                 }
