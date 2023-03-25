@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ArmorRacks.Things;
 using RimWorld;
 using Verse;
+using UnityEngine;
 using Verse.AI;
 
 namespace RoomApparels
@@ -13,6 +14,8 @@ namespace RoomApparels
     class CompRoomApparelsEnabler : ThingComp
     {
         public bool Enabled;
+        public bool setAllJobs;
+        public Dictionary<string, bool> skillsInComp;
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
@@ -28,12 +31,13 @@ namespace RoomApparels
                 yield break;
             }
             //Change this Later to get list of WorkTypes In the room
-            Command_Toggle command_Toggle = new Command_Toggle();
+            RoomApparelGizmoEnabler command_Toggle = new RoomApparelGizmoEnabler();
             command_Toggle.hotKey = KeyBindingDefOf.Command_TogglePower;
             command_Toggle.icon = TexCommand.GatherSpotActive;
             command_Toggle.isActive = (() => Enabled);
-            command_Toggle.defaultLabel = "Use This For Jobs Here".CapitalizeFirst();
-            command_Toggle.activateIfAmbiguous = false;
+            command_Toggle.setSkill(ref skillsInComp);
+            command_Toggle.defaultLabel = "Use This For Jobs".CapitalizeFirst();
+            command_Toggle.activateIfAmbiguous = false;            
             command_Toggle.toggleAction = () =>
              {
                  //for now change to int later
@@ -49,6 +53,41 @@ namespace RoomApparels
              };
             yield return command_Toggle;
             yield break;
+        }
+
+    }
+
+    class RoomApparelGizmoEnabler : Command_Toggle
+    {
+        private Dictionary<string, bool> enabledSkillList;
+        public void setSkill(ref Dictionary<string, bool> skillDict)
+        {
+            if (skillDict == null) {
+                skillDict = new Dictionary<string, bool>();
+            }
+            enabledSkillList = skillDict;
+        }
+
+        public override IEnumerable<FloatMenuOption> RightClickFloatMenuOptions
+        {
+            get {
+                foreach (var skill in DefDatabase<SkillDef>.AllDefsListForReading)
+                {
+                    string key = skill.ToString();
+                    yield return new FloatMenuOption(skill.LabelCap, () => {
+
+                        if (enabledSkillList.ContainsKey(key))
+                            enabledSkillList[key] = !enabledSkillList[key];
+                        else
+                            enabledSkillList[key] = true;
+                            
+                    }
+                    , ContentFinder<Texture2D>.Get("Check128")
+                    , (enabledSkillList.TryGetValue(key) ? Color.green : Color.red)
+                    );
+                }
+                yield break;
+             }
         }
 
     }
